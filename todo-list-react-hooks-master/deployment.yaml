@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todoapp-deployment
+  labels:
+    app: todoapp #label muss hier gleich sein wie im selector (key:value)
+spec: # specs vom deployment
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todoapp
+  template:
+    metadata:
+      labels:
+        app: todoapp
+        #überall in app-zeile müssen gleich sein,spaces sind wichtig
+    spec: # specs für pods
+      containers:
+      - name: myimage #containername und alles innerhalb des minus steht für eine listitem für die nr an pods
+        image: myimage:latest # containername:tag
+        ports:
+        - containerPort: 3000  #container bearbeitet Anfrage auf port 80
+
+
+---					# leerzeile plus ---  heißt ein neuer teil istab da, kann auch extra in service file schreiben (aber zusätzlicher command um ein yaml file zu erzeugen)
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-service
+spec:
+  selector:
+    app: todoapp
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80				#anfrage kommt auf port 80 rein
+    targetPort: 3000			#anfrage innen auf port 3000
